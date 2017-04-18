@@ -1,14 +1,6 @@
-class Event_category
+class EventCategory < ActiveRecord::Base
 
-  attr_reader :event, :category
-  ALL = []
-
-  def self.all
-    ALL
-  end
-
-  def initialize
-    ALL << self
-  end
+  belongs_to :event
+  belongs_to :category
 
 end
