@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 3) do
+ActiveRecord::Schema.define(version: 4) do
 
   create_table "categories", force: :cascade do |t|
     t.string "name"
@@ -22,9 +22,10 @@ ActiveRecord::Schema.define(version: 3) do
   end
 
   create_table "events", force: :cascade do |t|
-    t.string "name"
-    t.string "host"
-    t.string "location"
+    t.string   "name"
+    t.string   "host"
+    t.string   "location"
+    t.datetime "date"
   end
 
 end

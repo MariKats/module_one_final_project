@@ -17,5 +17,11 @@ DatabaseTasks.seed_loader = seed_loader.new
 load 'active_record/railties/databases.rake'
 
 task :console => :environment do
-  Pry.start
+0     Pry.start
 end
+
+# namespace :db do
+#   task :seed do
+#     require_relative '../db/seeds.rb'
+#   end
+# end
