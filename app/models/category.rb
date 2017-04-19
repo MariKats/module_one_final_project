@@ -1,21 +1,25 @@
 require_relative './event_category.rb'
 
-class Category
-  attr_reader :name
+class Category < ActiveRecord::Base
 
-  ALL = []
+  has_many :event_categories
+  has_many :events, through: :event_categories
 
-  def initialize(name)
-    @name = name
-    ALL << self
+  def self.find_by(name)
+    Category.where("name = ?", name)
   end
 
-  def self.all
-    ALL
+  def self.most_popular_category
+    # most_popular = EventCategory.select(:category_id).order(EventCategory.arel_table[:category_id].count).reverse_order.group(EventCategory.arel_table[:category_id].count).limit(1)
+    @popular = Category.joins(:events).group("categories.id").order("count(categories.id) DESC").first
   end
 
-  def events
-    whatever = Event_category.all.select {|ev| ev.category == self}
-    whatever.collect {|ev| ev.event}
-  end
 end
+
+# most_popular =
+# EventCategory.find_by_sql(
+#   "SELECT category_id FROM event_categories
+#   GROUP BY count(category_id)
+#   ORDER BY count(category_id) DESC
+#   LIMIT 1")
+# Category.where(category.id = most_popular)
