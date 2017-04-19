@@ -1,20 +1,24 @@
-require 'bundler/setup'
+require 'bundler'
 Bundler.require
 
-require 'rake'
-require 'active_record'
-require 'yaml/store'
-require 'ostruct'
-require 'date'
+# require 'rake'
+# require 'active_record'
+# require 'yaml/store'
+# require 'ostruct'
+# require 'date'
 
-DBNAME = "meetup"
+# DBNAME = "meetup"
+#
+# Dir[File.join(File.dirname(__FILE__), "../app/models", "*.rb")].each {|f| require f}
+# Dir[File.join(File.dirname(__FILE__), "../lib/support", "*.rb")].each {|f| require f}
+ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
 
-Dir[File.join(File.dirname(__FILE__), "../app/models", "*.rb")].each {|f| require f}
-Dir[File.join(File.dirname(__FILE__), "../lib/support", "*.rb")].each {|f| require f}
+require_all 'app'
 
-DBRegistry[ENV["ACTIVE_RECORD_ENV"]].connect!
-DB = ActiveRecord::Base.connection
-
-if ENV["ACTIVE_RECORD_ENV"] == "test"
-  ActiveRecord::Migration.verbose = false
-end
+#
+# DBRegistry[ENV["ACTIVE_RECORD_ENV"]].connect!
+# DB = ActiveRecord::Base.connection
+#
+# if ENV["ACTIVE_RECORD_ENV"] == "test"
+#   ActiveRecord::Migration.verbose = false
+# end

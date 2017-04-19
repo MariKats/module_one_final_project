@@ -1,4 +1,4 @@
-require_relative './event_category.rb'
+# require_relative './event_category.rb'
 require 'pry'
 
 class Event < ActiveRecord::Base
