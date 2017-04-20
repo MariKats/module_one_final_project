@@ -15,78 +15,66 @@ def zipcode
   zip.to_i
 end
 
-def category
-  puts "Please select the category that you are interested in, from list below: \n 1 = Arts & Culture \n 2 = Career & Business \n 3 = Dancing \n 4 = Fashion & Beauty \n 5 = Fitness \n 6 = Food & Drink \n 7 = Games \n 8 = Hobbies & Crafts \n 9 = Movies & Film \n 10 = Music \n 11 = Outdoors & Adventure \n 12 = Photography \n 13 = Singles \n 14 = Sports & Recreation \n 15 = Technology".colorize(:blue)
-  category_number = gets.chomp
-  if category_number.to_i > 15
-    puts "Please enter a valid category number".colorize(:red)
-    category_number = gets.chomp
-  elsif category_number == "1"
-    cat_name = 1
-  elsif category_number == "2"
-    cat_name = 2
-  elsif category_number == "3"
-    cat_name = 5
-  elsif category_number == "4"
-    cat_name = 8
-  elsif category_number == "5"
-    cat_name = 9
-  elsif category_number == "6"
-    cat_name = 10
-  elsif category_number == "7"
-    cat_name = 11
-  elsif category_number == "8"
-    cat_name = 15
-  elsif category_number == "9"
-    cat_name = 20
-  elsif category_number == "10"
-    cat_name = 21
-  elsif category_number == "11"
-    cat_name = 23
-  elsif category_number == "12"
-    cat_name = 27
-  elsif category_number == "13"
-    cat_name = 30
-  elsif category_number == "14"
-    cat_name = 32
-  elsif category_number == "15"
-    cat_name = 34
-  end
-  cat_name
-end
+def category_selections
+   puts "\n Please select the category that you are interested in, from list below: \n \n 1 = Arts & Culture \n 2 = Career & Business \n 3 = Dancing \n 4 = Fashion & Beauty \n 5 = Fitness \n 6 = Food & Drink \n 7 = Games \n 8 = Hobbies & Crafts \n 9 = Movies & Film \n 10 = Music \n 11 = Outdoors & Adventure \n 12 = Photography \n 13 = Singles \n 14 = Sports & Recreation \n 15 = Technology \n".colorize(:blue)
+ end
 
-def meetup_categories(cat_name)
-  if cat_name == 1
-    category_full_name = "Arts & Culture"
-  elsif cat_name == 2
-    category_full_name = "Career & Business"
-  elsif cat_name == 5
-    category_full_name = "Dancing"
-  elsif cat_name == 8
-    category_full_name = "Fashion & Beauty"
-  elsif cat_name == 9
-    category_full_name = "Fitness"
-  elsif cat_name == 10
-    category_full_name = "Food & Drink"
-  elsif cat_name == 11
-    category_full_name = "Games"
-  elsif cat_name == 15
-    category_full_name = "Hobbies & Crafts"
-  elsif cat_name == 20
-    category_full_name = "Movies & Film"
-  elsif cat_name == 21
-    category_full_name = "Music"
-  elsif cat_name == 23
-    category_full_name = "Outdoors & Adventure"
-  elsif cat_name == 27
-    category_full_name = "Photography"
-  elsif cat_name == 30
-    category_full_name = "Singles"
-  elsif cat_name == 34
-    category_full_name = "Technology"
-  end
-  category_full_name
-end
+ def category
+   category_selections
+   category_number = gets.chomp
+   if category_number == "1"
+     cat_name = "Arts & Culture"
+     cat_id = 1
+   elsif category_number == "2"
+     cat_name = "Careers & Business"
+     cat_id = 2
+   elsif category_number == "3"
+     cat_name = "Dancing"
+     cat_id = 5
+   elsif category_number == "4"
+     cat_name = "Fashion & Beauty"
+     cat_id = 8
+   elsif category_number == "5"
+     cat_name = "Fitness"
+     cat_id = 9
+   elsif category_number == "6"
+     cat_name = "Food & Drink"
+     cat_id = 10
+   elsif category_number == "7"
+     cat_name = "Games"
+     cat_id = 11
+   elsif category_number == "8"
+     cat_name = "Hobbies & Crafts"
+     cat_id = 15
+   elsif category_number == "9"
+     cat_name = "Movies & Film"
+     cat_id = 20
+   elsif category_number == "10"
+     cat_name = "Music"
+     cat_id = 21
+   elsif category_number == "11"
+     cat_name = "Outdoors & Adventure"
+     cat_id = 23
+   elsif category_number == "12"
+     cat_name = "Photography"
+     cat_id = 27
+   elsif category_number == "13"
+     cat_name = "Singles"
+     cat_id = 30
+   elsif category_number == "14"
+     cat_name = "Sports & Recreation"
+     cat_id = 32
+   elsif category_number == "15"
+     cat_name = "Technology"
+     cat_id = 34
+   end
+   puts "\n You have selected #{cat_name}. Was that the selection you wanted to make? (y/n) \n".colorize(:blue)
+   cat_id
+ end
+
+ def category_selected
+   answer = gets.chomp
+ end
 
 def date_to_epoch(date)
   array = date.split("/")
@@ -172,10 +160,36 @@ def display_favorite(event_saved)
   end
 end
 
+def ask_for_previous_events
+  puts "Would you like to see your previously bookmarked events? (y/n)"
+  answer = gets.chomp
+  if answer.downcase == "y"
+    show_events
+    exit_method
+  else
+    exit_method
+  end
+end
+
+def show_events
+  puts "These are your bookmarked events:"
+  event_names = Event.all.collect do |event|
+    event.name
+  end
+  event_names.join(',')
+  event_names.each do |event|
+    puts event
+  end
+end
+
 def run
   welcome
   zip = zipcode
-  cat_name = category
+  selection = "n"
+  while selection == "n"
+    cat_name = category
+    selection = category_selected
+  end
   check_if_false = true
   while check_if_false
     start = start_time
@@ -184,12 +198,16 @@ def run
   end
   events = GetEvents.new
   events_output = events.get_events_by_zipcode_category_and_time(zip, cat_name, start, end_t)
-  category_name = meetup_categories(cat_name)
-  user_favorite = pick_favorite
-  if user_favorite == nil
+  if events_output == false
     exit_method
   else
-    save_favorite(user_favorite, events_output, category_name)
+    user_favorite = pick_favorite
+    if user_favorite == nil
+      ask_for_previous_events
+    else
+      save_favorite(user_favorite, events_output, cat_name)
+      ask_for_previous_events
+    end
   end
 end
 
