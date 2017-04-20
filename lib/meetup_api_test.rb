@@ -19,7 +19,7 @@ require 'net/http'
        time = epoch_to_date(event["time"])
        puts "Event Date: #{time}".colorize(:blue)
        puts "Event Link: #{event["event_url"]}".colorize(:blue)
-       puts "****************************************************".colorize(:green)
+       puts "*****************************************************".colorize(:green)
      end
      events
    end
