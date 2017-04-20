@@ -13,16 +13,13 @@ require 'net/http'
      response = Net::HTTP.get_response(uri)
      events = JSON.parse(response.body)
      events["results"].each_with_index do |event, index|
-       puts "Event Number: #{index+1}"
-       puts "Event Name: #{event["name"]}"
-      # #  raises error if empty
-      #   if event["venue"]["address_1"] != " "
-      #    puts "Event Location: #{event["venue"]["address_1"]}"
-      #  else
-      #    puts "Event Location: unknown"
-       end
-       puts "Event Host: #{event["group"]["name"]}"
-       puts "****************************************************"
+       puts "Event Number: #{index+1}".colorize(:blue)
+       puts "Event Name: #{event["name"]}".colorize(:blue)
+       puts "Event Host: #{event["group"]["name"]}".colorize(:blue)
+       time = epoch_to_date(event["time"])
+       puts "Event Date: #{time}".colorize(:blue)
+       puts "Event Link: #{event["event_url"]}".colorize(:blue)
+       puts "****************************************************".colorize(:green)
      end
      events
    end
