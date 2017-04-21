@@ -2,7 +2,7 @@ require_relative "../config/environment.rb"
 require_relative "./meetup_api_test.rb"
 
 def welcome
-  puts Rainbow("\nWelcome!").blue
+  puts Rainbow("\nWelcome! \n This is a search engine for meetup events. You can input your zipcode, select the category you are interested in and enter a timeframe for your search. You will get a list of events that you may want to go to! You will be able to bookmark the event you are interested in, view the event's webpage, and look back at previous events you have bookmarked.").blue
 end
 
 def zipcode
@@ -146,7 +146,8 @@ def save_favorite(user_favorite, events_output, category_name)
   event = events_output["results"][user_favorite-1]
   time = epoch_to_date(event["time"])
   new_event = Event.create(name: event["name"], host: event["group"]["name"], url: event["event_url"], date: time)
-  new_category = Category.create(name: category_name)
+  new_category = Category.find_or_create_by(name: category_name)
+  # new_category = Category.create(name: category_name)
   new_event.categories << new_category
   display_favorite(new_event)
 end

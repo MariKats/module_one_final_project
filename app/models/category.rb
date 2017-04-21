@@ -14,6 +14,11 @@ class Category < ActiveRecord::Base
     @popular = Category.joins(:events).group("categories.id").order("count(categories.id) DESC").first
   end
 
+  def self.favorite_category
+    self.joins(:event_categories).group(:category_id).count.maximum(:category_id)
+  end
+
+
 end
 
 # most_popular =
