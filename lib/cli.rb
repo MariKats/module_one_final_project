@@ -2,7 +2,7 @@ require_relative "../config/environment.rb"
 require_relative "./meetup_api_test.rb"
 
 def welcome
-  puts Rainbow("\nWelcome! \n This is a search engine for meetup events. You can input your zipcode, select the category you are interested in and enter a timeframe for your search. You will get a list of events that you may want to go to! You will be able to bookmark the event you are interested in, view the event's webpage, and look back at previous events you have bookmarked.").blue
+  puts Rainbow("\nWelcome!\n\nThis is a search engine for meetup events. You can input your zipcode, select the category you are interested in and enter a timeframe for your search. You will get a list of events that you may want to go to! You will be able to bookmark the event you are interested in, view the event's webpage, and look back at previous events you have bookmarked.").blue
 end
 
 def zipcode
@@ -23,53 +23,56 @@ def category_selections
    category_selections
    category_number = gets.chomp
    if category_number == "1"
-     cat_name = "Arts & Culture"
-     cat_id = 1
+     category_name = "Arts & Culture"
+     category_id = 1
    elsif category_number == "2"
-     cat_name = "Careers & Business"
-     cat_id = 2
+     category_name = "Careers & Business"
+     category_id = 2
    elsif category_number == "3"
-     cat_name = "Dancing"
-     cat_id = 5
+     category_name = "Dancing"
+     category_id = 5
    elsif category_number == "4"
-     cat_name = "Fashion & Beauty"
-     cat_id = 8
+     category_name = "Fashion & Beauty"
+     category_id = 8
    elsif category_number == "5"
-     cat_name = "Fitness"
-     cat_id = 9
+     category_name = "Fitness"
+     category_id = 9
    elsif category_number == "6"
-     cat_name = "Food & Drink"
-     cat_id = 10
+     category_name = "Food & Drink"
+     category_id = 10
    elsif category_number == "7"
-     cat_name = "Games"
-     cat_id = 11
+     category_name = "Games"
+     category_id = 11
    elsif category_number == "8"
-     cat_name = "Hobbies & Crafts"
-     cat_id = 15
+     category_name = "Hobbies & Crafts"
+     category_id = 15
    elsif category_number == "9"
-     cat_name = "Movies & Film"
-     cat_id = 20
+     category_name = "Movies & Film"
+     category_id = 20
    elsif category_number == "10"
-     cat_name = "Music"
-     cat_id = 21
+     category_name = "Music"
+     category_id = 21
    elsif category_number == "11"
-     cat_name = "Outdoors & Adventure"
-     cat_id = 23
+     category_name = "Outdoors & Adventure"
+     category_id = 23
    elsif category_number == "12"
-     cat_name = "Photography"
-     cat_id = 27
+     category_name = "Photography"
+     category_id = 27
    elsif category_number == "13"
-     cat_name = "Singles"
-     cat_id = 30
+     category_name = "Singles"
+     category_id = 30
    elsif category_number == "14"
-     cat_name = "Sports & Recreation"
-     cat_id = 32
+     category_name = "Sports & Recreation"
+     category_id = 32
    elsif category_number == "15"
-     cat_name = "Technology"
-     cat_id = 34
+     category_name = "Technology"
+     category_id = 34
+   else
+     puts Rainbow("Please enter a valid category number.").red
+     category
    end
-   puts Rainbow("\nYou have selected #{cat_name}. Was that the selection you wanted to make? ").blue + Rainbow("(y/n)\n").red
-   cat_id
+   puts Rainbow("\nYou have selected #{category_name}. Was that the selection you wanted to make? ").blue + Rainbow("(y/n)\n").red
+   {cat_name: category_name, cat_id: category_id}
  end
 
  def category_selected
@@ -152,26 +155,8 @@ def save_favorite(user_favorite, events_output, category_name)
   display_favorite(new_event)
 end
 
-# def popup(url)
-#   puts Rainbow("\nIf you want information on the event, enter 1, otherwise, enter 0.\n").blue
-#   answer = gets.chomp
-#   if answer == "1"
-#     Launchy.open "#{url}"
-#   end
-# end
-
-# def display_favorite(event_saved)
-#   puts Rainbow("\nYou have bookmarked: \n Name: ").black + Rainbow("#{event_saved.name} \n").cyan + Rainbow("\n Host: ").black + Rainbow("#{event_saved.host} \n").cyan + Rainbow("\n Date: ").black + Rainbow("#{event_saved.date} \n").cyan + Rainbow("\n Link: ").black + Rainbow("#{event_saved.event_url} \n").cyan
-# end
-
 def display_favorite(event_saved)
   puts Rainbow("\nYou have bookmarked:\n\n").blue + Rainbow(" Name: #{event_saved.name} \n Host: #{event_saved.host} \n Date: #{event_saved.date} \n Link: #{event_saved.url}\n").cyan
-
-
-# puts Rainbow("\nYou have bookmarked: \n").black.underline
-# puts Rainbow("Name: ").black + Rainbow("#{event_saved.name} \n").cyan
-# puts Rainbow("\n Host: ").black + Rainbow("#{event_saved.host} \n").cyan + Rainbow("\n Date: ").black + Rainbow("#{event_saved.date} \n").cyan + Rainbow("\n Link: ").black + Rainbow("#{event_saved.event_url} \n").cyan
-
   info
   answer = gets.chomp
   if answer == "1"
@@ -188,9 +173,6 @@ def ask_for_previous_events
   answer = gets.chomp
   if answer.downcase == "y"
     show_events
-    exit_method
-  else
-    exit_method
   end
 end
 
@@ -205,13 +187,26 @@ def show_events
   end
 end
 
+def show_favorite_category
+  puts Rainbow("\nWould you like to see your most bookmarked category?").blue + Rainbow(" (y/n) \n").red
+  answer = gets.chomp
+  if answer.downcase == "y"
+    Category.most_popular_category
+    exit_method
+  else
+    exit_method
+  end
+end
+
 def run
   welcome
   zip = zipcode
 
   selection = "n"
   while selection == "n"
-    cat_name = category
+    cat_hash = category
+    cat_id = cat_hash[:cat_id]
+    cat_name = cat_hash[:cat_name]
     selection = category_selected
   end
 
@@ -223,17 +218,20 @@ def run
   end
 
   events = GetEvents.new
-  events_output = events.get_events_by_zipcode_category_and_time(zip, cat_name, start, end_t)
+  events_output = events.get_events_by_zipcode_category_and_time(zip, cat_id, start, end_t)
   if events_output == false
     exit_method
   else
     user_favorite = pick_favorite
     if user_favorite == nil
       ask_for_previous_events
+      show_favorite_category
     else
       save_favorite(user_favorite, events_output, cat_name)
       ask_for_previous_events
+      show_favorite_category
     end
+
   end
 end
 

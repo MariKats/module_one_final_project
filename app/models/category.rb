@@ -1,4 +1,4 @@
-require_relative './event_category.rb'
+# require_relative './event_category.rb'
 
 class Category < ActiveRecord::Base
 
@@ -10,21 +10,11 @@ class Category < ActiveRecord::Base
   end
 
   def self.most_popular_category
-    # most_popular = EventCategory.select(:category_id).order(EventCategory.arel_table[:category_id].count).reverse_order.group(EventCategory.arel_table[:category_id].count).limit(1)
-    @popular = Category.joins(:events).group("categories.id").order("count(categories.id) DESC").first
+    result = ActiveRecord::Base.connection.execute("SELECT categories.name FROM categories
+    JOIN event_categories ON categories.id = event_categories.category_id
+    GROUP BY category_id ORDER BY (COUNT(event_categories.category_id)) DESC
+    LIMIT 1")
+    result_name = result.first["name"]
+    puts Rainbow("\n#{result_name} is your most bookmarked event category!\n").blue
   end
-
-  def self.favorite_category
-    self.joins(:event_categories).group(:category_id).count.maximum(:category_id)
-  end
-
-
 end
-
-# most_popular =
-# EventCategory.find_by_sql(
-#   "SELECT category_id FROM event_categories
-#   GROUP BY count(category_id)
-#   ORDER BY count(category_id) DESC
-#   LIMIT 1")
-# Category.where(category.id = most_popular)
